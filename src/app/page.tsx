@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import Sidebar from "@/components/Sidebar";
+import AnalyticsChart from "@/components/AnalyticsChart";
 
 export default function Home() {
   return (
@@ -177,6 +178,8 @@ export default function Home() {
             </div>
 
           </div>
+          {/* Hiring analytics */}
+          <AnalyticsChart/>
         </div>
       </section>
     </main>
