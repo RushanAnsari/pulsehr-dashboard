@@ -1,3 +1,4 @@
+
 import {
   Users,
   Activity,
@@ -10,18 +11,21 @@ import Sidebar from "@/components/Sidebar";
 
 export default function Home() {
   return (
-    // `flex` puts the fixed-width sidebar beside the flexible dashboard area.
-    <main className="flex min-h-screen bg-slate-950 text-white">
-      {/* Left navigation */}
-      <Sidebar />
+    <main className="flex min-h-screen w-full overflow-x-hidden bg-slate-950 text-white">
 
-      {/* Right side takes all remaining horizontal space */}
-      <section className="min-w-0 flex-1 overflow-y-auto">
-        {/* Dashboard content container */}
-        <div className="mx-auto max-w-[1600px] p-6 lg:p-8">
+      {/* Sidebar is hidden on mobile so it cannot consume viewport width. */}
+      <div className="hidden shrink-0 md:flex">
+        <Sidebar />
+      </div>
+
+      {/* Main content becomes the full viewport width on mobile. */}
+      <section className="min-w-0 w-full flex-1 overflow-x-hidden overflow-y-auto">
+
+        {/* Responsive padding: 16px mobile → 32px tablet/desktop */}
+        <div className="mx-auto w-full max-w-[1600px] p-4 sm:p-8">
 
           {/* Dashboard heading */}
-          <div className="mb-8">
+          <div className="mb-6 sm:mb-8">
             <p className="mb-1 text-sm font-medium text-indigo-400">
               Overview
             </p>
@@ -36,21 +40,18 @@ export default function Home() {
           </div>
 
           {/* 
-            Responsive grid:
-            1 column → mobile
-            2 columns → tablet
-            4 columns → desktop
-
-            `min-w-0` on the parent prevents grid content from
-            creating unwanted horizontal overflow.
+            Responsive metrics grid:
+            Mobile  → 1 column
+            Tablet  → 2 columns
+            Large   → 4 columns
           */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid w-full min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
             {/* Total Employees */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30 hover:bg-white/[0.05]">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-400">
+            <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30 hover:bg-white/[0.05]">
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-slate-400">
                     Total Employees
                   </p>
 
@@ -59,31 +60,30 @@ export default function Home() {
                   </h2>
                 </div>
 
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400">
                   <Users size={21} strokeWidth={1.8} />
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center gap-2">
-                <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
+              <div className="mt-5 flex min-w-0 items-center gap-2">
+                <span className="flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
                   <ArrowUpRight size={13} />
                   +12%
                 </span>
 
-                <span className="text-xs text-slate-500">
+                <span className="truncate text-xs text-slate-500">
                   this month
                 </span>
               </div>
 
-              {/* Decorative background glow */}
-              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-indigo-500/10 blur-3xl transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-indigo-500/10 blur-3xl" />
             </div>
 
             {/* Active Now */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/30 hover:bg-white/[0.05]">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-400">
+            <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/30 hover:bg-white/[0.05]">
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-slate-400">
                     Active Now
                   </p>
 
@@ -92,33 +92,32 @@ export default function Home() {
                   </h2>
                 </div>
 
-                <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                <div className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
                   <Activity size={21} strokeWidth={1.8} />
 
-                  {/* Small pulsing status indicator */}
                   <span className="absolute right-1.5 top-1.5 h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center gap-2">
-                <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
+              <div className="mt-5 flex min-w-0 items-center gap-2">
+                <span className="flex shrink-0 items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
                   Live
                 </span>
 
-                <span className="text-xs text-slate-500">
+                <span className="truncate text-xs text-slate-500">
                   employees online
                 </span>
               </div>
 
-              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-emerald-500/10 blur-3xl transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-emerald-500/10 blur-3xl" />
             </div>
 
             {/* Leave Requests */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/30 hover:bg-white/[0.05]">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-400">
+            <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/30 hover:bg-white/[0.05]">
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-slate-400">
                     Leave Requests
                   </p>
 
@@ -127,29 +126,29 @@ export default function Home() {
                   </h2>
                 </div>
 
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
                   <CalendarClock size={21} strokeWidth={1.8} />
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center gap-2">
-                <span className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-400">
+              <div className="mt-5 flex min-w-0 items-center gap-2">
+                <span className="shrink-0 rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-400">
                   5 pending
                 </span>
 
-                <span className="text-xs text-slate-500">
+                <span className="truncate text-xs text-slate-500">
                   requires review
                 </span>
               </div>
 
-              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-amber-500/10 blur-3xl transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-amber-500/10 blur-3xl" />
             </div>
 
             {/* Payroll Status */}
-            <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 hover:bg-white/[0.05]">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-400">
+            <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-violet-500/30 hover:bg-white/[0.05]">
+              <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-slate-400">
                     Payroll Status
                   </p>
 
@@ -158,26 +157,26 @@ export default function Home() {
                   </h2>
                 </div>
 
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400">
                   <WalletCards size={21} strokeWidth={1.8} />
                 </div>
               </div>
 
-              <div className="mt-5 flex items-center gap-2">
-                <span className="flex items-center gap-1 rounded-full bg-violet-500/10 px-2 py-1 text-xs font-medium text-violet-400">
+              <div className="mt-5 flex min-w-0 items-center gap-2">
+                <span className="flex shrink-0 items-center gap-1 rounded-full bg-violet-500/10 px-2 py-1 text-xs font-medium text-violet-400">
                   <ArrowUpRight size={13} />
                   +2.4%
                 </span>
 
-                <span className="text-xs text-slate-500">
+                <span className="truncate text-xs text-slate-500">
                   processed
                 </span>
               </div>
 
-              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-violet-500/10 blur-3xl transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-violet-500/10 blur-3xl" />
             </div>
-          </div>
 
+          </div>
         </div>
       </section>
     </main>
