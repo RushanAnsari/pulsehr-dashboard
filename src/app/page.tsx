@@ -9,6 +9,7 @@ import {
 
 import Sidebar from "@/components/Sidebar";
 import AnalyticsChart from "@/components/AnalyticsChart";
+import RecentActivity from "@/components/RecentActivity";
 
 export default function Home() {
   return (
@@ -180,6 +181,8 @@ export default function Home() {
           </div>
           {/* Hiring analytics */}
           <AnalyticsChart/>
+          {/* Recent employee activity*/}
+          <RecentActivity/>
         </div>
       </section>
     </main>
