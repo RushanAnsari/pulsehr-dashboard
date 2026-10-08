@@ -1,5 +1,10 @@
-import { LogIn, LogOut, CalendarOff, Laptop } from "lucide-react";
-import { Activity } from "react";
+
+import {
+  LogIn,
+  LogOut,
+  CalendarOff,
+  Laptop,
+} from "lucide-react";
 
 // Temporary frontend data.
 // Later this will come from our attendance/activity API.
@@ -67,15 +72,17 @@ const statusStyles = {
 
 export default function RecentActivity() {
   return (
+    // The widget itself can never expand beyond its parent's width.
     <section className="mt-6 w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl">
-      {/* Section header */}
 
-      <div className="flex items-center justify-between gap-4 border-b border-white/5 px-4 py-4 sm:px-6">
+      {/* Section header */}
+      <div className="flex min-w-0 items-center justify-between gap-4 border-b border-white/5 px-4 py-4 sm:px-6">
         <div className="min-w-0">
           <h2 className="text-base font-semibold text-white sm:text-lg">
             Recent Activity
           </h2>
-          <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+
+          <p className="mt-1 truncate text-xs text-slate-500 sm:text-sm">
             Latest employee activity across your organization
           </p>
         </div>
@@ -88,20 +95,27 @@ export default function RecentActivity() {
         </button>
       </div>
 
-      {/* Desktop/tablet table. Hidden on small screens because a wide table can cause unnecessary horizontal scrolling.*/}
-      <div className="hidden overflow-x-auto md:block">
+      {/* 
+        IMPORTANT:
+        Only this wrapper is horizontally scrollable.
+        The outer dashboard/widget remains locked.
+      */}
+      <div className="hidden w-full min-w-0 overflow-x-auto md:block">
         <table className="w-full min-w-[700px]">
           <thead>
             <tr className="border-b border-white/5 text-left">
               <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-slate-600">
                 Employee
               </th>
+
               <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-slate-600">
                 Status
               </th>
+
               <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-slate-600">
                 Time
               </th>
+
               <th className="px-6 py-3 text-xs font-medium uppercase tracking-wider text-slate-600">
                 Department
               </th>
@@ -110,30 +124,25 @@ export default function RecentActivity() {
 
           <tbody>
             {recentActivities.map((activity) => {
-              const status =
-                statusStyles[activity.type as keyof typeof statusStyles];
+              const status = statusStyles[activity.type as keyof typeof statusStyles];
               const StatusIcon = status.icon;
+
               return (
-                <tr
-                  key={`${activity.name}-${activity.time}`}
-                  className="border-b border-white/5 transition hover:bg-white/[0.025] last:border-b-0"
-                >
+                <tr key={`${activity.name}-${activity.time}`} className="border-b border-white/5 transition hover:bg-white/[0.025] last:border-b-0">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/30 to-violet-500/30 text-xs font-semibold text-indigo-300 ring-1 ring-white/10">
                         {activity.initials}
                       </div>
 
-                      <span className="text-sm font-medium text-slate-200">
+                      <span className="whitespace-nowrap text-sm font-medium text-slate-200">
                         {activity.name}
                       </span>
                     </div>
                   </td>
 
                   <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${status.className}`}
-                    >
+                    <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium ${status.className}`}>
                       <StatusIcon size={13} />
                       {activity.action}
                     </span>
@@ -143,7 +152,7 @@ export default function RecentActivity() {
                     {activity.time}
                   </td>
 
-                  <td className="px-6 py-4 text-sm text-slate-400">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
                     {activity.department}
                   </td>
                 </tr>
@@ -153,14 +162,18 @@ export default function RecentActivity() {
         </table>
       </div>
 
-      {/* Mobile activity list. Instead of squeezing four coulmns into a phone, we transform each row into a compact activity card. */}
-      <div className="divide-y divide-white/5 md:hidden">
-            {recentActivities.map((activity) => {
-                const status = statusStyles[activity.type as keyof typeof statusStyles];
-                const StatusIcon = status.icon;
+      {/* 
+        Mobile layout:
+        We don't render the wide table on small screens.
+        Instead, each employee becomes a compact responsive row.
+      */}
+      <div className="w-full min-w-0 divide-y divide-white/5 md:hidden">
+        {recentActivities.map((activity) => {
+          const status = statusStyles[activity.type as keyof typeof statusStyles];
+          const StatusIcon = status.icon;
 
-                return (
-                    <div key={`${activity.name}-${activity.time}`} className="flex min-w-0 items-center gap-3 px-4 py-4">
+          return (
+            <div key={`${activity.name}-${activity.time}`} className="flex w-full min-w-0 items-center gap-3 px-4 py-4">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/30 to-violet-500/30 text-xs font-semibold text-indigo-300 ring-1 ring-white/10">
                 {activity.initials}
               </div>
@@ -177,13 +190,14 @@ export default function RecentActivity() {
 
               <span className={`inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium ${status.className}`}>
                 <StatusIcon size={12} />
-                <span className="hidden xs:inline">
+
+                <span className="hidden sm:inline">
                   {activity.action}
                 </span>
               </span>
             </div>
-                );
-            })}
+          );
+        })}
       </div>
     </section>
   );
