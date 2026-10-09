@@ -359,7 +359,7 @@ export default function PayrollPage() {
       {/* Payslip modal: only renders when an employee is selected. */}
       {selectedSlip && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/80 p-3 backdrop-blur-md sm:p-6 print:static print:block print:bg-white print:p-0 print:backdrop-blur-none"
+          className="printable-slip fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-slate-950/80 p-3 backdrop-blur-md sm:p-6 print:static print:block print:bg-white print:p-0 print:backdrop-blur-none"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) closeSlip();
           }}
@@ -504,7 +504,7 @@ export default function PayrollPage() {
                 <button
                   type="button"
                   onClick={printSlip}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-400"
+                  className="not-print inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-400"
                 >
                   <Printer size={16} />
                   Print / Download PDF

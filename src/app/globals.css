@@ -28,3 +28,81 @@ body {
     transform: translateX(0);
   }
 }
+
+@media print {
+  /* Remove browser-added page margins and use a white canvas.*/
+  @page{
+    size:auto;
+    margin: 12mm;
+  }
+
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: economy !important;
+    print-color-adjust: economy !important;
+  }
+
+  /* Hide everything in the doucment by default. */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Keep the salary slip and its descendants printable. */
+  .printable-slip,
+  .printable-slip * {
+    visibility: visible !important;
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    border-color: #d1d5db !important;
+  }
+
+  /* Make the modal occupy the printable page. */
+  .printable-slip {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    transform: none !important;
+    background: #ffffff !important;
+  }
+  /* Hide modal controls and other elements marked as non-printable. */
+  .printable-slip .no-print {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  /* Prevent dark theme text and colored lables from printing  faintly*/
+  .printable-slip h1,
+  .printable-slip h2,
+  .printable-slip h3,
+  .printable-slip p,
+  .printable-slip span,
+  .printable-slip td,
+  .printable-slip th,
+  .printable-slip strong,
+  .printable-slip div{
+    color: #000000 !important;
+  }
+
+  /* Avoid splitting a salaru slip section across printed pages. */
+  .printable-slip section,
+  .printable-slip table,
+  .printable-slip tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
