@@ -2,17 +2,15 @@
 
 import { useMemo, useState } from "react";
 import {
+  CalendarDays,
   Plus,
   Search,
   SlidersHorizontal,
-  CalendarDays,
   Users,
 } from "lucide-react";
-
 import DashboardShell from "@/components/DashboardShell";
 
-// Temporary employee data.
-// Later this will come from our backend/API.
+// Mock employee data. Employee CRUD and backend integration can be added next.
 const employees = [
   {
     id: 1,
@@ -96,21 +94,20 @@ const departments = [
   "Finance",
 ];
 
-export default function EmployeesPage() {
-  // Search input state.
-  const [search, setSearch] = useState("");
+type EmployeeStatus = "Active" | "On Leave";
 
-  // Selected department state.
+type Employee = (typeof employees)[number];
+
+export default function EmployeesPage() {
+  const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("All Departments");
 
-  // Filter employees whenever search or department changes.
-  // useMemo avoids recalculating the list unnecessarily.
+  // Apply both filters together whenever the search or department changes.
   const filteredEmployees = useMemo(() => {
     return employees.filter((employee) => {
-      const matchesSearch = employee.name
+      const matchesSearch = `${employee.name} ${employee.role}`
         .toLowerCase()
-        .includes(search.toLowerCase());
-
+        .includes(search.toLowerCase().trim());
       const matchesDepartment =
         department === "All Departments" || employee.department === department;
 
@@ -120,70 +117,105 @@ export default function EmployeesPage() {
 
   return (
     <DashboardShell>
-      {/* Page header */}
-      <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="mb-1 text-sm font-medium text-indigo-400">People</p>
+      <div className="mx-auto w-full min-w-0 max-w-[1600px] p-4 sm:p-6 lg:p-8">
+        {/* Page heading and primary action */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-sm text-indigo-400">Workspace / People</p>
+            <h1 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              Employees
+            </h1>
+            <p className="mt-2 text-sm text-slate-400">
+              Manage your team, employee records, and departments.
+            </p>
+          </div>
 
-          <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            Employees Directory
-          </h1>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Manage and view everyone across your organization.
-          </p>
+          <button
+            type="button"
+            onClick={() =>
+              alert("Add Employee form will be implemented in the next step.")
+            }
+            className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-500 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-indigo-400 sm:w-auto"
+          >
+            <Plus size={18} />
+            Add Employee
+          </button>
         </div>
 
-        {/* Add Employee button */}
-        <button
-          type="button"
-          className="group flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-indigo-400 hover:shadow-indigo-500/30 sm:w-auto"
-        >
-          <Plus
-            size={18}
-            className="transition-transform duration-200 group-hover:rotate-90"
-          />
-          Add Employee
-        </button>
-      </div>
+        {/* Summary and filters */}
+        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-slate-400">Total Employees</p>
+              <Users size={19} className="text-indigo-400" />
+            </div>
+            <p className="mt-3 text-3xl font-bold text-white">
+              {employees.length}
+            </p>
+            <p className="mt-2 text-xs text-slate-500">
+              Across all departments
+            </p>
+          </div>
 
-      {/* Search and filter section */}
-      <div className="mb-6 w-full rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-5">
-        <div className="flex flex-col gap-3 md:flex-row">
-          {/* Search */}
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-slate-400">Active Employees</p>
+              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+            </div>
+            <p className="mt-3 text-3xl font-bold text-white">
+              {
+                employees.filter((employee) => employee.status === "Active")
+                  .length
+              }
+            </p>
+            <p className="mt-2 text-xs text-slate-500">Currently active</p>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-slate-400">On Leave</p>
+              <CalendarDays size={19} className="text-amber-400" />
+            </div>
+            <p className="mt-3 text-3xl font-bold text-white">
+              {
+                employees.filter((employee) => employee.status === "On Leave")
+                  .length
+              }
+            </p>
+            <p className="mt-2 text-xs text-slate-500">Currently on leave</p>
+          </div>
+        </div>
+
+        {/* Search and department filter */}
+        <div className="mt-8 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative min-w-0 flex-1">
             <Search
               size={18}
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
             />
-
             <input
-              type="text"
+              type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search employees by name..."
-              className="h-11 w-full rounded-xl border border-white/10 bg-slate-950/60 pl-10 pr-4 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/10"
+              placeholder="Search employees or roles..."
+              aria-label="Search employees or roles"
+              className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-3 pl-11 pr-4 text-sm text-white outline-none transition-colors placeholder:text-slate-500 focus:border-indigo-400/50 focus:ring-2 focus:ring-indigo-500/10"
             />
           </div>
 
-          {/* Department filter */}
-          <div className="relative w-full md:w-56">
+          <div className="relative w-full shrink-0 sm:w-56">
             <SlidersHorizontal
-              size={17}
-              className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-slate-500"
+              size={16}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
             />
-
             <select
               value={department}
               onChange={(event) => setDepartment(event.target.value)}
-              className="h-11 w-full appearance-none rounded-xl border border-white/10 bg-slate-950/60 pl-10 pr-4 text-sm text-slate-300 outline-none transition focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/10"
+              aria-label="Filter by department"
+              className="w-full appearance-none rounded-xl border border-white/10 bg-slate-900 py-3 pl-9 pr-4 text-sm text-slate-200 outline-none focus:border-indigo-400/50"
             >
               {departments.map((item) => (
-                <option
-                  key={item}
-                  value={item}
-                  className="bg-slate-900 text-white"
-                >
+                <option key={item} value={item}>
                   {item}
                 </option>
               ))}
@@ -191,160 +223,140 @@ export default function EmployeesPage() {
           </div>
         </div>
 
-        {/* Result count */}
-        <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
-          <Users size={14} />
-          <span>
-            Showing {filteredEmployees.length} of {employees.length} employees
+        {/* Results heading */}
+        <div className="mt-6 flex items-center justify-between gap-3">
+          <h2 className="text-base font-semibold text-white">
+            Employee Directory
+          </h2>
+          <span className="shrink-0 text-xs text-slate-500">
+            {filteredEmployees.length}{" "}
+            {filteredEmployees.length === 1 ? "employee" : "employees"}
           </span>
         </div>
-      </div>
 
-      {/* Employee table */}
-      <section className="w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl">
-        {/* Desktop/tablet table */}
-        <div className="hidden w-full min-w-0 overflow-x-auto md:block">
-          <table className="w-full min-w-[800px]">
-            <thead>
-              <tr className="border-b border-white/5 text-left">
-                <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-slate-600">
-                  Employee
-                </th>
-
-                <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-slate-600">
-                  Role
-                </th>
-
-                <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-slate-600">
-                  Department
-                </th>
-
-                <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-slate-600">
-                  Join Date
-                </th>
-
-                <th className="px-6 py-4 text-xs font-medium uppercase tracking-wider text-slate-600">
-                  Status
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {filteredEmployees.map((employee) => (
-                <tr
-                  key={employee.id}
-                  className="border-b border-white/5 transition hover:bg-white/[0.025] last:border-b-0"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/30 to-violet-500/30 text-xs font-semibold text-indigo-300 ring-1 ring-white/10">
-                        {employee.initials}
-                      </div>
-
-                      <span className="whitespace-nowrap text-sm font-medium text-slate-200">
-                        {employee.name}
-                      </span>
-                    </div>
-                  </td>
-
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
-                    {employee.role}
-                  </td>
-
-                  <td className="px-6 py-4">
-                    <span className="rounded-lg bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-400">
-                      {employee.department}
-                    </span>
-                  </td>
-
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
-                    <span className="inline-flex items-center gap-2">
-                      <CalendarDays size={14} className="text-slate-600" />
-                      {employee.joinDate}
-                    </span>
-                  </td>
-
-                  <td className="px-6 py-4">
-                    <StatusBadge status={employee.status} />
-                  </td>
+        {/* Desktop/tablet table: hidden on mobile, with horizontal scrolling confined to this container. */}
+        <section className="mt-4 hidden md:block w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl">
+          <div className="hidden md:block w-full min-w-0 overflow-x-auto scrollbar-thin">
+            <table className="w-full min-w-[850px] text-left">
+              <thead>
+                <tr className="border-b border-white/10 text-xs uppercase tracking-wider text-slate-500">
+                  <th className="px-6 py-4 font-medium">Employee</th>
+                  <th className="px-6 py-4 font-medium">Role</th>
+                  <th className="px-6 py-4 font-medium">Department</th>
+                  <th className="px-6 py-4 font-medium">Join Date</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
 
-        {/* Mobile employee cards */}
-        <div className="divide-y divide-white/5 md:hidden">
-          {filteredEmployees.map((employee) => (
-            <div
-              key={employee.id}
-              className="flex min-w-0 items-center gap-3 p-4"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500/30 to-violet-500/30 text-xs font-semibold text-indigo-300 ring-1 ring-white/10">
-                {employee.initials}
-              </div>
+              <tbody className="divide-y divide-white/[0.06]">
+                {filteredEmployees.map((employee) => (
+                  <tr
+                    key={employee.id}
+                    className="transition-colors hover:bg-white/[0.03]"
+                  >
+                    <td className="whitespace-nowrap px-6 py-4">
+                      <EmployeeIdentity employee={employee} />
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">
+                      {employee.role}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
+                      {employee.department}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-400">
+                      {employee.joinDate}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4">
+                      <StatusBadge status={employee.status} />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-slate-200">
-                  {employee.name}
-                </p>
-
-                <p className="mt-1 truncate text-xs text-slate-500">
-                  {employee.role}
-                </p>
-
-                <p className="mt-1 truncate text-xs text-slate-600">
-                  {employee.department} · Joined {employee.joinDate}
-                </p>
-              </div>
-
-              <StatusBadge status={employee.status} />
-            </div>
-          ))}
-        </div>
-
-        {/* Empty search state */}
-        {filteredEmployees.length === 0 && (
-          <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/5 text-slate-500">
-              <Users size={22} />
-            </div>
-
-            <h3 className="text-sm font-semibold text-white">
-              No employees found
-            </h3>
-
-            <p className="mt-1 max-w-sm text-xs text-slate-500">
-              Try changing your search term or selecting another department.
-            </p>
+            {/* Empty state for desktop/tablet search results */}
+            {filteredEmployees.length === 0 && <EmptyState />}
           </div>
-        )}
-      </section>
+        </section>
+
+        {/* Mobile employee cards: strictly visible below md; the table is hidden there. */}
+        <section className="mt-4 block md:hidden">
+          {filteredEmployees.length > 0 ? (
+            <div className="space-y-3">
+              {filteredEmployees.map((employee) => (
+                <article
+                  key={employee.id}
+                  className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl"
+                >
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <EmployeeIdentity employee={employee} />
+                    </div>
+                    <StatusBadge status={employee.status} />
+                  </div>
+
+                  <div className="mt-4 border-t border-white/[0.06] pt-3">
+                    <p className="break-words text-sm text-slate-300">
+                      {employee.role}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                      <span>{employee.department}</span>
+                      <span>Joined {employee.joinDate}</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyState />
+          )}
+        </section>
+      </div>
     </DashboardShell>
   );
 }
 
-// Reusable status badge.
-// Keeping this separate makes the employee row easier to maintain.
-function StatusBadge({ status }: { status: string }) {
+// Shared employee identity keeps the table and mobile card designs consistent.
+function EmployeeIdentity({ employee }: { employee: Employee }) {
+  return (
+    <div className="flex min-w-0 items-center gap-3">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-indigo-400/20 bg-indigo-500/10 text-xs font-semibold text-indigo-300">
+        {employee.initials}
+      </div>
+      <span className="break-words text-sm font-medium text-slate-200">
+        {employee.name}
+      </span>
+    </div>
+  );
+}
+
+// Reusable status badge with consistent styling.
+function StatusBadge({ status }: { status: EmployeeStatus }) {
   const isActive = status === "Active";
 
   return (
     <span
-      className={
-        isActive
-          ? "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400 ring-1 ring-emerald-500/20"
-          : "inline-flex shrink-0 items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400 ring-1 ring-amber-500/20"
-      }
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${isActive ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-400" : "border-amber-500/20 bg-amber-500/10 text-amber-400"}`}
     >
       <span
-        className={
-          isActive
-            ? "h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50"
-            : "h-1.5 w-1.5 rounded-full bg-amber-400"
-        }
+        className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-400" : "bg-amber-400"}`}
       />
       {status}
     </span>
+  );
+}
+
+// Shared empty state for searches with no matching employees.
+function EmptyState() {
+  return (
+    <div className="px-6 py-12 text-center">
+      <Users size={28} className="mx-auto text-slate-600" />
+      <p className="mt-3 text-sm font-medium text-slate-300">
+        No employees found
+      </p>
+      <p className="mt-1 text-xs text-slate-500">
+        Try another name, role, or department.
+      </p>
+    </div>
   );
 }
